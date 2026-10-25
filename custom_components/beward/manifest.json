@@ -5,7 +5,7 @@
         "local_file"
     ],
     "codeowners": [
-        "@Limych"
+        "@zazhigaev"
     ],
     "config_flow": true,
     "dependencies": [
@@ -13,11 +13,10 @@
     ],
     "documentation": "https://github.com/Limych/ha-beward",
     "iot_class": "local_push",
-    "issue_tracker": "https://github.com/Limych/ha-beward/issues",
+    "issue_tracker": "https://github.com/zazhigaev/ha-beward/issues",
     "requirements": [
-        "pip>=21.3.1",
-        "beward>=1.1.13,<2.0",
+        "beward @ git+https://github.com/zazhigaev/py-beward.git@main",
         "ha-ffmpeg~=3.2"
     ],
-    "version": "1.1.30"
+    "version": "1.1.31-custom.1"
 }
