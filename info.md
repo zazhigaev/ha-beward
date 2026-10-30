@@ -1,7 +1,3 @@
-{% if prerelease %}
-### NB!: This is a Beta release!
-{% endif %}
-
 [![GitHub Release][releases-shield]][releases]
 [![License][license-shield]][license]
 [![Community Forum][forum-shield]][forum]
