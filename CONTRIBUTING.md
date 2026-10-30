@@ -1,65 +1,23 @@
-# Contribution guidelines
+# Contribution Guidelines
 
-Contributing to this project should be as easy and transparent as possible, whether it's:
+Contributions to this project are welcome! Whether you are fixing a bug, adding support for other Beward hardware models, or improving the documentation, please feel free to submit issues and pull requests.
 
-- Reporting a bug
-- Discussing the current state of the code
-- Submitting a fix
-- Proposing new features
+## Development Workflow
 
-## IMPORTANT! Install development environment first
+1. Fork this repository and create your feature branch from `master`.
+2. Keep dependencies and hardware protocol definitions synchronized with the [`py-beward`](https://github.com/zazhigaev/py-beward) library.
+3. If you add support for new device models or alter endpoints, update the corresponding documentation sections in `README.md`.
+4. Ensure code formatting remains consistent.
+5. Test changes against hardware or autonomous Python test scripts before opening a pull request.
+6. Submit a Pull Request with a clear description of the modifications and tested firmware versions.
 
-When making changes in code, please use the existing development environment — this will save you from many errors and help create more convenient code to support. To install the environment, run the `./scripts/setup` script.
+## Bug Reports & Feature Requests
 
-## Github is used for everything
+Please use GitHub Issues to report problems or propose enhancements:
 
-Github is used to host code, to track issues and feature requests, as well as accept pull requests.
+- **Bug Reports:** Include your hardware model, firmware version (e.g., from `systeminfo_cgi`), Home Assistant version, and relevant debug logs from `custom_components.beward`.
+- **New Device Support:** Provide the output of `systeminfo_cgi` and verified working CGI snapshot/event endpoints.
 
-Pull requests are the best way to propose changes to the codebase.
+## Credits & License
 
-1. Fork the repo and create your branch from `main`.
-2. If you've changed something, update the documentation.
-3. Make sure your code lints (using black).
-4. Test you contribution.
-5. Issue that pull request!
-
-## Any contributions you make will be under the MIT Software License
-
-In short, when you submit code changes, your submissions are understood to be under the same [MIT License](http://choosealicense.com/licenses/mit/) that covers the project. Feel free to contact the maintainers if that's a concern.
-
-## Report bugs using Github's [issues](../../issues)
-
-GitHub issues are used to track public bugs.
-Report a bug by [opening a new issue](../../issues/new/choose); it's that easy!
-
-## Write bug reports with detail, background, and sample code
-
-**Great Bug Reports** tend to have:
-
-- A quick summary and/or background
-- Steps to reproduce
-  - Be specific!
-  - Give sample code if you can.
-- What you expected would happen
-- What actually happens
-- Notes (possibly including why you think this might be happening, or stuff you tried that didn't work)
-
-People *love* thorough bug reports. I'm not even kidding.
-
-## Use a Consistent Coding Style
-
-Use [black](https://github.com/ambv/black) to make sure the code follows the style.
-
-## Test your code modification
-
-This custom component is based on [integration blueprint template](https://github.com/Limych/ha-blueprint).
-
-It comes with development environment in a container, easy to launch
-if you use Visual Studio Code. With this container you will have a stand alone
-Home Assistant instance running and already configured with the included
-[`configuration.yaml`](./config/configuration.yaml)
-file.
-
-## License
-
-By contributing, you agree that your contributions will be licensed under its MIT License.
+By contributing to this repository, you agree that your contributions will be licensed under the project's **MIT License**, respecting the original authorship of Andrey "Limych" Khrolenok and the subsequent fork additions.
