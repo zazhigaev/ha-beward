@@ -1,315 +1,108 @@
-*Please :star: this repo if you find it useful*
-
 # ha-beward
 
 [![GitHub Release][releases-shield]][releases]
 [![GitHub Activity][commits-shield]][commits]
 [![License][license-shield]][license]
-
 [![hacs][hacs-shield]][hacs]
-[![Project Maintenance][maintenance-shield]][user_profile]
-
+[![Maintainer][maintenance-shield]][user_profile]
 [![Community Forum][forum-shield]][forum]
 
-_This implementation allows you to integrate your [Beward surveillance devices][beward] to Home Assistant._
+Home Assistant custom component for integrating **Beward** video intercoms, doorbells, and IP cameras.
+
+This repository is a maintained fork of the original [ha-beward integration by Limych][original-component], extended with support for newer intercom hardware (including the **DS91406M** series) and bundled with an updated [`py-beward`][py-beward-repo] backend library.
 
 ![Beward Logo][exampleimg]
 
-There is currently support for the following device types within Home Assistant:
-- [Binary Sensor](#binary-sensor)
-- [Camera](#camera)
-- [Sensor](#sensor)
+---
 
-Currently only doorbells are supported by this integration.
+## Supported Features
 
-I also suggest you [visit the support topic][forum] on the community forum.
+- **Live RTSP Stream & Snapshots:** View high-resolution video streams and retrieve still images via HTTP CGI.
+- **Doorbell Call Sensor:** Immediate detection of physical call button presses (`SensorAlarm`).
+- **Device Availability Sensor:** Real-time online/offline connectivity monitoring.
+- **Visitor & Motion History:** Access timestamps and captured frames of the last doorbell press and motion events.
 
-## Installation
+---
 
-### Install from HACS (recommended)
+## Supported Device Types & Models
 
-1. Have [HACS][hacs] installed, this will allow you to easily manage and track updates.
-2. Add repo https://github.com/zazhigaev/ha-beward
-1. Search for "Beward".
-1. Click Install below the found integration.
-1. _If you want to configure component via Home Assistant UI..._\
-    in the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Beward".
-1. _If you want to configure component via `configuration.yaml`..._\
-    follow instructions below, then restart Home Assistant.
+### [Binary Sensor](#binary-sensor)
 
-### Manual installation
+Binary sensor entities reflect hardware state transitions:
 
-1. Using the tool of choice open the directory (folder) for your HA configuration (where you find `configuration.yaml`).
-1. If you do not have a `custom_components` directory (folder) there, you need to create it.
-1. In the `custom_components` directory (folder) create a new folder called `beward`.
-1. Download file `beward.zip` from the [latest release section][releases-latest] in this repository.
-1. Extract _all_ files from this archive you downloaded in the directory (folder) you created.
-1. Restart Home Assistant
-1. _If you want to configure component via Home Assistant UI..._\
-    in the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Beward".
-1. _If you want to configure component via `configuration.yaml`..._\
-    follow instructions below, then restart Home Assistant.
+- **Online (`DeviceOnline`):** Reports device availability in the local network (all models).
+- **Ding / Call (`SensorAlarm`):** Reports physical call button presses (doorbell models only).
 
-## Configuration
-
-To integrate Beward device, add the following to your `configuration.yaml` file:
-```yaml
-# Example configuration.yaml entry
-beward:
-  - host: HOST_ADDRESS_CAMERA
-    username: YOUR_USERNAME
-    password: YOUR_PASSWORD
-```
-
-### Configuration variables
-
-**host**:\
-  _(string) (Required)_\
-  The IP address or hostname of your Beward device. If using a hostname, make sure the DNS works as expected.
-
-**username**:\
-  _(string) (Required)_\
-  The username for accessing your Beward device.
-
-**password**:\
-  _(string) (Required)_\
-  The password for accessing your Beward device.
-
-**name**:\
-  _(string) (Optional) (Default value: "Beward <device_id>")_\
-  This parameter allows you to override the name of your Beward device in the frontend.
-
-**port**:\
-  _(integer) (Optional) (Default value: 80)_\
-  The port that the Beward device is running on.
-
-**rtsp_port**:\
-  _(integer) (Optional) (Default value: Autodetect from the device)_\
-  The RTSP port that the Beward camera is running on.
-
-**stream**:\
-  _(integer) (Optional) (Default value: 0)_\
-  Number of video stream from Beward device.
-
-**ffmpeg_arguments**:\
-  _(string) (Optional) (Default value: "-pred 1")_\
-  Extra options to pass to ffmpeg, e.g., image quality or video filter options.
-
-**Note:** To be able to playback the live stream, it is required to install the `ffmpeg` component. Make sure to follow the steps mentioned at [FFMPEG documentation][ffmpeg-doc].
-
-**cameras**:\
-  _(list) (Optional) (Default value: all cameras below)_\
-  Camera types to display in the frontend. The following cameras can be added:
-
-> **live**:\
-> Live view camera.
->
-> **last_motion**:\
-> Camera which store photo of last motion.
->
-> **last_ding**:\
-> Camera which store photo of last visitor.
-
-**binary_sensors**:\
-  _(list) (Optional) (Default value: None)_\
-  Conditions to display in the frontend. The following conditions can be monitored:
-
-> **online**:\
-> Return `on` when camera is available (i.e., responding to commands), `off` when not.
->
-> **motion**:\
-> Return `on` when a motion is detected, `off` when not.
->
-> **ding**:\
-> Return `on` when a doorbell button is pressed, `off` when not.
-
-**sensors**:\
-  _(list) (Optional) (Default value: None)_\
-  Conditions to display in the frontend. The following conditions can be monitored:
-
-> **last_activity**:\
-> Return the timestamp from the last event captured (ding/motion/on demand) by the Beward device camera.
->
-> **last_motion**:\
-> Return the timestamp from the last motion event captured by the Beward device camera.
->
-> **last_ding**:\
-> Return the timestamp from the last time the Beward doorbell button was pressed.
-
-## Advanced Configuration
-
-You can also use this more advanced configuration example:
-
-```yaml
-# Example configuration.yaml entry
-beward:
-  - host: HOST_ADDRESS_CAMERA_1
-    username: YOUR_USERNAME
-    password: YOUR_PASSWORD
-    binary_sensors:
-      - motion
-      - online
-    sensors:
-      - last_ding
-
-  # Add second camera
-  - host: HOST_ADDRESS_CAMERA_2
-    username: YOUR_USERNAME
-    password: YOUR_PASSWORD
-    name: "Back door"
-    rtsp_port: 1554
-    camera:
-      - last_motion
-```
-
-## Usage tips
-
-### Send history image via Telegram
-
-You can use photos of the last motion and the last ding outside this integration.
-For example, send it via Telegram.
-
-History images are stored in `/config/.storage/beward/`.
-For example, for a camera named "Front door" there will be files `front_door_last_motion.jpg` and `front_door_last_ding.jpg`.
-
-Automation example (see the [Telegram documentation][telegram-photo] for more details how to send images):
-```yaml
-# Example configuration.yaml entry
-homeassistant:
-  whitelist_external_dirs:
-    - /config/.storage/beward  # Required for Home Assistant version 0.48+
-
-automation:
-  - alias: "Front door Ding"
-    trigger:
-      platform: state
-      entity_id: binary_sensor.front_door_ding
-      to: 'on'
-    action:
-      - service: notify.NOTIFIER_NAME
-        data:
-          message: "The doorbell is ringing!"
-          data:
-            photo:
-              file: /config/.storage/beward/front_door_last_ding.jpg
-              caption: "The doorbell is ringing!"
-```
-
-[telegram-photo]: https://www.home-assistant.io/components/telegram/#photo-support
-
-## Track updates
-
-You can automatically track new versions of this component and update it by [HACS][hacs].
-
-## Troubleshooting
-
-To enable debug logs use this configuration:
-```yaml
-# Example configuration.yaml entry
-logger:
-  default: info
-  logs:
-    custom_components.beward: debug
-```
-... then restart HA.
-
-## Contributions are welcome!
-
-This is an active open-source project. We are always open to people who want to
-use the code or contribute to it.
-
-We have set up a separate document containing our [contribution guidelines](CONTRIBUTING.md).
-
-Thank you for being involved! :heart_eyes:
-
-## Authors & contributors
-
-The original setup of this component is by [Andrey "Limych" Khrolenok](https://github.com/Limych).
-
-For a full list of all authors and contributors, check [the contributor's page][contributors].
-
-This Home Assistant custom component was created and is updated using the [HA-Blueprint template](https://github.com/Limych/ha-blueprint). You can use this template to maintain your own Home Assistant custom components.
-
-## License
-
-MIT License
-
-Copyright (c) 2019-2022 Andrey "Limych" Khrolenok
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-***
-
-[component]: https://github.com/zazhigaev/ha-beward
-[commits-shield]: https://img.shields.io/github/commit-activity/y/zazhigaev/ha-beward.svg?style=popout
-[commits]: https://github.com/zazhigaev/ha-beward/commits/master
-[hacs-shield]: https://img.shields.io/badge/HACS-Default-orange.svg?style=popout
-[hacs]: https://hacs.xyz
-[exampleimg]: https://github.com/zazhigaev/ha-beward/raw/master/beward.png
-[forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg?style=popout
-[forum]: https://community.home-assistant.io/t/beward-cameras-and-doorbells-integration/129388
-[license]: https://github.com/zazhigaev/ha-beward/blob/main/LICENSE.md
-[license-shield]: https://img.shields.io/badge/license-Creative_Commons_BY--NC--SA_License-lightgray.svg?style=popout
-[maintenance-shield]: https://img.shields.io/badge/maintainer-Serge-blue.svg?style=popout
-[releases-shield]: https://img.shields.io/github/release/zazhigaev/ha-beward.svg?style=popout
-[releases]: https://github.com/zazhigaev/ha-beward/releases
-[releases-latest]: https://github.com/zazhigaev/ha-beward/releases/latest
-[user_profile]: https://github.com/zazhigaev
-[report_bug]: https://github.com/zazhigaev/ha-beward/issues/new?template=bug_report.md
-[suggest_idea]: https://github.com/zazhigaev/ha-beward/issues/new?template=feature_request.md
-[contributors]: https://github.com/zazhigaev/ha-beward/graphs/contributors
-
-## Binary Sensor
-
-The binary sensor platform creates status entities depending on the device class:
-
-- **Online (`DeviceOnline`)**: Available for all supported devices. Reports network availability.
-- **Ding / Call (`SensorAlarm`)**: Supported only on **Doorbell** models when a visitor presses the physical call button.
-
-### Supported Doorbell models:
+#### Supported Doorbell Models:
 - ALP-600, DC11EP, DK103, DK103M, DKS20210
 - DS03M, DS05M(P), DS06, DS06M, DS06A(P), DS07P-LP
 - DSN06PS, DSN23215PS
-- **DS91406M**
+- **DS91406M** *(Added in this fork)*
 - S06A, S06M
 
 ---
 
-## Camera
+### [Camera](#camera)
 
-The camera platform exposes live RTSP video feeds and periodic HTTP snapshots. Supported across all devices:
+Exposes video feeds and snapshot mechanisms:
 
-- **Live Stream**: H.264 stream via RTSP protocol (`/av0_0` or secondary streams).
-- **Snapshot**: Image captured through the device HTTP CGI interface (`images_cgi`).
+- **Live Stream:** Real-time H.264 video feed delivered over RTSP (`/av0_0` or secondary profiles).
+- **Snapshot:** Still JPEG images fetched via HTTP CGI (`images_cgi?channel=0`).
 
-### Supported models:
-- **Cameras**: B102S (and compatible IP cameras).
-- **Doorbells**: All models listed in the Doorbell section above (including DS91406M).
+#### Supported Models:
+- **IP Cameras:** B102S (and compatible models).
+- **Doorbells:** All models listed in the Doorbell section above (including DS91406M).
 
 ---
 
-## Sensor
+### [Sensor](#sensor)
 
-The sensor platform exposes telemetry, operational data, and event history timestamps:
+Provides telemetry, operational status, and historical event timestamps:
 
-- **Last Ding Image & Timestamp**: Stores the timestamp and frame captured during the most recent doorbell press event (Doorbell models only).
-- **Last Motion Image & Timestamp**: Stores the timestamp and frame of the last motion detection event.
-[beward]: https://www.beward.ru/
-[ffmpeg-doc]: https://www.home-assistant.io/components/ffmpeg/
-[patreon-shield]: https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3DLimych%26type%3Dpatrons&style=popout
+- **Last Ding:** Timestamp and snapshot of the last call button press.
+- **Last Motion:** Timestamp and snapshot of the last detected motion event.
+- **Last Activity:** Combined timestamp of any recent device interaction.
+
+---
+
+## Installation
+
+### Method 1: Via HACS (Recommended)
+
+1. Make sure [HACS][hacs] is installed and working in your Home Assistant instance.
+2. In HACS, go to **Integrations** → click the three dots in the top right corner → **Custom repositories**.
+3. Add repository URL: `https://github.com/zazhigaev/ha-beward` with category **Integration**.
+4. Search for **Beward**, click **Download**, and select the latest release.
+5. Restart Home Assistant Core.
+
+### Method 2: Manual Installation
+
+1. Open your Home Assistant configuration directory (where `configuration.yaml` is located).
+2. If `custom_components` does not exist, create it.
+3. Download the `beward.zip` archive from the [Latest Releases][releases-latest] page.
+4. Extract the `beward` folder into `custom_components/`.
+5. Restart Home Assistant Core.
+
+---
+
+## Configuration
+
+### Via User Interface (Recommended)
+
+1. In Home Assistant, navigate to **Settings** → **Devices & Services** → **Integrations**.
+2. Click **+ Add Integration** and search for **Beward**.
+3. Fill in the connection form:
+   - **Host:** IP address of your Beward device (e.g., `192.168.0.99`)
+   - **Port:** `80` (default)
+   - **Username:** `admin` (or your configured username)
+   - **Password:** device password
+4. Click **Submit**.
+
+### Via `configuration.yaml` (Legacy)
+
+```yaml
+beward:
+  - host: 192.168.0.99
+    username: YOUR_USERNAME
+    password: YOUR_PASSWORD
+    name: "Front Door"
