@@ -30,6 +30,7 @@ I also suggest you [visit the support topic][forum] on the community forum.
 ### Install from HACS (recommended)
 
 1. Have [HACS][hacs] installed, this will allow you to easily manage and track updates.
+2. Add repo https://github.com/zazhigaev/ha-beward
 1. Search for "Beward".
 1. Click Install below the found integration.
 1. _If you want to configure component via Home Assistant UI..._\
