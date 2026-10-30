@@ -1,22 +1,15 @@
 {
-    "domain": "beward",
-    "name": "Beward Integration",
-    "after_dependencies": [
-        "local_file"
-    ],
-    "codeowners": [
-        "@zazhigaev"
-    ],
-    "config_flow": true,
-    "dependencies": [
-        "ffmpeg"
-    ],
-    "documentation": "https://github.com/Limych/ha-beward",
-    "iot_class": "local_push",
-    "issue_tracker": "https://github.com/zazhigaev/ha-beward/issues",
-    "requirements": [
-        "beward @ git+https://github.com/zazhigaev/py-beward.git@main",
-        "ha-ffmpeg~=3.2"
-    ],
-    "version": "1.1.31-custom.1"
+  "domain": "beward",
+  "name": "Beward",
+  "codeowners": ["@zazhigaev"],
+  "config_flow": true,
+  "dependencies": ["ffmpeg"],
+  "documentation": "https://github.com/zazhigaev/ha-beward",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/zazhigaev/ha-beward/issues",
+  "requirements": [
+    "beward @ git+https://github.com/zazhigaev/py-beward.git@master",
+    "ha-ffmpeg~=3.2"
+  ],
+  "version": "1.1.32"
 }
