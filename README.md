@@ -26,7 +26,14 @@ This repository is a maintained fork of the original [ha-beward integration by L
 
 ## Supported Device Types & Models
 
-### [Binary Sensor](#binary-sensor)
+There is currently support for the following device types within Home Assistant:
+- [Binary Sensor](#binary-sensor)
+- [Camera](#camera)
+- [Sensor](#sensor)
+
+---
+
+### Binary Sensor
 
 Binary sensor entities reflect hardware state transitions:
 
@@ -42,7 +49,7 @@ Binary sensor entities reflect hardware state transitions:
 
 ---
 
-### [Camera](#camera)
+### Camera
 
 Exposes video feeds and snapshot mechanisms:
 
@@ -55,7 +62,7 @@ Exposes video feeds and snapshot mechanisms:
 
 ---
 
-### [Sensor](#sensor)
+### Sensor
 
 Provides telemetry, operational status, and historical event timestamps:
 
@@ -70,7 +77,7 @@ Provides telemetry, operational status, and historical event timestamps:
 ### Method 1: Via HACS (Recommended)
 
 1. Make sure [HACS][hacs] is installed and working in your Home Assistant instance.
-2. In HACS, go to **Integrations** → click the three dots in the top right corner → **Custom repositories**.
+2. In HACS, go to **Integrations** -> click the three dots in the top right corner -> **Custom repositories**.
 3. Add repository URL: `https://github.com/zazhigaev/ha-beward` with category **Integration**.
 4. Search for **Beward**, click **Download**, and select the latest release.
 5. Restart Home Assistant Core.
@@ -89,7 +96,7 @@ Provides telemetry, operational status, and historical event timestamps:
 
 ### Via User Interface (Recommended)
 
-1. In Home Assistant, navigate to **Settings** → **Devices & Services** → **Integrations**.
+1. In Home Assistant, navigate to **Settings** -> **Devices & Services** -> **Integrations**.
 2. Click **+ Add Integration** and search for **Beward**.
 3. Fill in the connection form:
    - **Host:** IP address of your Beward device (e.g., `192.168.0.99`)
@@ -106,3 +113,74 @@ beward:
     username: YOUR_USERNAME
     password: YOUR_PASSWORD
     name: "Front Door"
+```
+
+---
+
+## Automation Example: Send Snapshot to Telegram on Call
+
+When someone rings the doorbell, Home Assistant can instantly send the captured image to Telegram:
+
+```yaml
+homeassistant:
+  allowlist_external_dirs:
+    - /config/.storage/beward
+
+automation:
+  - alias: "Front Door Ding Notification"
+    trigger:
+      platform: state
+      entity_id: binary_sensor.front_door_ding
+      to: 'on'
+    action:
+      - service: notify.telegram
+        data:
+          message: "Someone is at the door!"
+          data:
+            photo:
+              file: /config/.storage/beward/front_door_last_ding.jpg
+              caption: "Visitor at the front door"
+```
+
+---
+
+## Troubleshooting
+
+To enable verbose debug logging, add the following to your `configuration.yaml`:
+
+```yaml
+logger:
+  default: info
+  logs:
+    custom_components.beward: debug
+    beward: debug
+```
+
+Check the logs under **Settings** -> **System** -> **Logs**.
+
+---
+
+## Credits & License
+
+- **Original Author & Maintainer:** [Andrey "Limych" Khrolenok](https://github.com/Limych) (author of the original `ha-beward` and `py-beward` implementations).
+- **Fork Maintainer:** [Sergey Zazhigaev](https://github.com/zazhigaev) (DS91406M hardware integration and modern HA compatibility updates).
+
+This project is open-source software licensed under the terms of the **MIT License**. See the [LICENSE.md](LICENSE.md) file for full details.
+
+[original-component]: https://github.com/Limych/ha-beward
+[py-beward-repo]: https://github.com/zazhigaev/py-beward
+[commits-shield]: https://img.shields.io/github/commit-activity/y/zazhigaev/ha-beward.svg?style=popout
+[commits]: https://github.com/zazhigaev/ha-beward/commits/master
+[hacs-shield]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=popout
+[hacs]: https://hacs.xyz
+[exampleimg]: https://github.com/zazhigaev/ha-beward/raw/master/beward.png
+[forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg?style=popout
+[forum]: https://community.home-assistant.io/t/beward-cameras-and-doorbells-integration/129388
+[license]: https://github.com/zazhigaev/ha-beward/blob/master/LICENSE.md
+[license-shield]: https://img.shields.io/badge/license-MIT-blue.svg?style=popout
+[maintenance-shield]: https://img.shields.io/badge/maintainer-Sergey%20Zazhigaev-blue.svg?style=popout
+[releases-shield]: https://img.shields.io/github/release/zazhigaev/ha-beward.svg?style=popout
+[releases]: https://github.com/zazhigaev/ha-beward/releases
+[releases-latest]: https://github.com/zazhigaev/ha-beward/releases/latest
+[user_profile]: https://github.com/zazhigaev
+[report_bug]: https://github.com/zazhigaev/ha-beward/issues/new
