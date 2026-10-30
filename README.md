@@ -274,6 +274,42 @@ SOFTWARE.
 [report_bug]: https://github.com/zazhigaev/ha-beward/issues/new?template=bug_report.md
 [suggest_idea]: https://github.com/zazhigaev/ha-beward/issues/new?template=feature_request.md
 [contributors]: https://github.com/zazhigaev/ha-beward/graphs/contributors
+
+## Binary Sensor
+
+The binary sensor platform creates status entities depending on the device class:
+
+- **Online (`DeviceOnline`)**: Available for all supported devices. Reports network availability.
+- **Ding / Call (`SensorAlarm`)**: Supported only on **Doorbell** models when a visitor presses the physical call button.
+
+### Supported Doorbell models:
+- ALP-600, DC11EP, DK103, DK103M, DKS20210
+- DS03M, DS05M(P), DS06, DS06M, DS06A(P), DS07P-LP
+- DSN06PS, DSN23215PS
+- **DS91406M**
+- S06A, S06M
+
+---
+
+## Camera
+
+The camera platform exposes live RTSP video feeds and periodic HTTP snapshots. Supported across all devices:
+
+- **Live Stream**: H.264 stream via RTSP protocol (`/av0_0` or secondary streams).
+- **Snapshot**: Image captured through the device HTTP CGI interface (`images_cgi`).
+
+### Supported models:
+- **Cameras**: B102S (and compatible IP cameras).
+- **Doorbells**: All models listed in the Doorbell section above (including DS91406M).
+
+---
+
+## Sensor
+
+The sensor platform exposes telemetry, operational data, and event history timestamps:
+
+- **Last Ding Image & Timestamp**: Stores the timestamp and frame captured during the most recent doorbell press event (Doorbell models only).
+- **Last Motion Image & Timestamp**: Stores the timestamp and frame of the last motion detection event.
 [beward]: https://www.beward.ru/
 [ffmpeg-doc]: https://www.home-assistant.io/components/ffmpeg/
 [patreon-shield]: https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3DLimych%26type%3Dpatrons&style=popout
