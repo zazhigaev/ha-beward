@@ -74,16 +74,22 @@ class BewardFlowHandler(ConfigFlow, domain=DOMAIN):
                 await self.async_set_unique_id(user_input[CONF_HOST])
                 self._abort_if_unique_id_configured()
 
-                default_options = {
+                default_entities = {
                     CONF_CAMERAS: list(CAMERAS),
                     CONF_BINARY_SENSORS: list(BINARY_SENSORS),
                     CONF_SENSORS: list(SENSORS),
                 }
 
+                # Объединяем учетные данные и дефолтные списки сущностей в data
+                entry_data = {
+                    **user_input,
+                    **default_entities,
+                }
+
                 return self.async_create_entry(
                     title=user_input[CONF_HOST],
-                    data=user_input,
-                    options=default_options,
+                    data=entry_data,
+                    options=default_entities,
                 )
 
             errors["base"] = "auth"
