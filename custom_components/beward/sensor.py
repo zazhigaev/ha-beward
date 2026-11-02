@@ -70,6 +70,10 @@ async def async_setup_entry(
 
 def _setup_entities(controller: BewardController, config: ConfigType) -> list[Entity]:
     """Set up entities for device."""
+    configured_sensors = config.get(CONF_SENSORS)
+    if configured_sensors is None:
+        configured_sensors = list(SENSORS)
+
     category = None
     if isinstance(controller.device, beward.BewardDoorbell):
         category = CAT_DOORBELL
@@ -78,7 +82,7 @@ def _setup_entities(controller: BewardController, config: ConfigType) -> list[En
 
     return [
         BewardSensor(controller, x)
-        for x in config.get(CONF_SENSORS, [])
+        for x in configured_sensors
         if category in SENSORS[x][1]
     ]
 
