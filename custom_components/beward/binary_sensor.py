@@ -39,7 +39,7 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> bool:
-    """Set up a binary sensors for a Beward device."""
+    """Set up binary sensors for a Beward device."""
     entities = []
 
     if entry.source == SOURCE_IMPORT:
@@ -61,6 +61,10 @@ async def async_setup_entry(
 
 def _setup_entities(controller: BewardController, config: ConfigType) -> list[Entity]:
     """Set up entities for device."""
+    configured_binary_sensors = config.get(CONF_BINARY_SENSORS)
+    if configured_binary_sensors is None:
+        configured_binary_sensors = list(BINARY_SENSORS)
+
     category = None
     if isinstance(controller.device, beward.BewardDoorbell):
         category = CAT_DOORBELL
@@ -69,7 +73,7 @@ def _setup_entities(controller: BewardController, config: ConfigType) -> list[En
 
     return [
         BewardBinarySensor(controller, x)
-        for x in config.get(CONF_BINARY_SENSORS, [])
+        for x in configured_binary_sensors
         if category in BINARY_SENSORS[x][1]
     ]
 
