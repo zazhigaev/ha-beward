@@ -73,8 +73,17 @@ class BewardFlowHandler(ConfigFlow, domain=DOMAIN):
             if valid:
                 await self.async_set_unique_id(user_input[CONF_HOST])
                 self._abort_if_unique_id_configured()
+
+                default_options = {
+                    CONF_CAMERAS: list(CAMERAS),
+                    CONF_BINARY_SENSORS: list(BINARY_SENSORS),
+                    CONF_SENSORS: list(SENSORS),
+                }
+
                 return self.async_create_entry(
-                    title=user_input[CONF_HOST], data=user_input
+                    title=user_input[CONF_HOST],
+                    data=user_input,
+                    options=default_options,
                 )
 
             errors["base"] = "auth"
@@ -169,10 +178,13 @@ class BewardOptionsFlowHandler(OptionsFlow):
                     ): cv.multi_select(CAMERAS),
                     vol.Optional(
                         CONF_BINARY_SENSORS,
-                        default=self.options.get(CONF_BINARY_SENSORS, []),
+                        default=self.options.get(
+                            CONF_BINARY_SENSORS, list(BINARY_SENSORS)
+                        ),
                     ): cv.multi_select(BINARY_SENSORS),
                     vol.Optional(
-                        CONF_SENSORS, default=self.options.get(CONF_SENSORS, [])
+                        CONF_SENSORS,
+                        default=self.options.get(CONF_SENSORS, list(SENSORS)),
                     ): cv.multi_select(SENSORS),
                 }
             ),
