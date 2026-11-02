@@ -88,6 +88,10 @@ async def _async_setup_entities(
     controller: BewardController, config: ConfigType
 ) -> list[Entity]:
     """Set up entities for device."""
+    configured_cameras = config.get(CONF_CAMERAS)
+    if configured_cameras is None:
+        configured_cameras = list(CAMERAS)
+
     category = None
     if isinstance(controller.device, beward.BewardDoorbell):
         category = CAT_DOORBELL
@@ -95,7 +99,7 @@ async def _async_setup_entities(
         category = CAT_CAMERA
 
     entities = []
-    for camera_type in config.get(CONF_CAMERAS, list(CAMERAS)):
+    for camera_type in configured_cameras:
         if category in CAMERAS[camera_type][1]:
             if camera_type == CAMERA_LIVE:
                 await controller.hass.async_add_executor_job(
